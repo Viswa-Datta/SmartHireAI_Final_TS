@@ -1,36 +1,28 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "@clerk/clerk-react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "@/config/firebase.config";
 
 const CertificateViewer = () => {
-  const { userId } = useAuth();
   const [eligible, setEligible] = useState(false);
-  const [userName, setUserName] = useState("");
+  const [userName, setUserName] = useState("John Doe"); // Static name for now
 
   useEffect(() => {
-    const checkEligibility = async () => {
-      if (!userId) return;
-
-      const docRef = doc(db, "users", userId);
-      const snap = await getDoc(docRef);
-
-      if (snap.exists()) {
-        const data = snap.data();
-        setUserName(data.name || "User");
-
-        const score = data.avgRating || 0;
-        const count = data.totalInterviews || 0;
-        if (score >= 7 && count >= 5) {
-          setEligible(true);
-        }
-      }
+    // Simulate fetching static data (replace with Firebase logic later)
+    const staticData = {
+      avgRating: 8, // Example score
+      totalInterviews: 6, // Example count
+      name: "John Doe",
     };
 
-    checkEligibility();
-  }, [userId]);
+    setUserName(staticData.name);
+
+    const { avgRating, totalInterviews } = staticData;
+
+    // Check eligibility: avgRating >= 7 and totalInterviews >= 5
+    if (avgRating >= 7 && totalInterviews >= 5) {
+      setEligible(true);
+    }
+  }, []);
 
   const downloadCertificate = () => {
     const pdf = new jsPDF();
@@ -43,7 +35,7 @@ const CertificateViewer = () => {
     autoTable(pdf, {
       head: [["Date Issued"]],
       body: [[new Date().toLocaleDateString()]],
-      startY: 100
+      startY: 100,
     });
     pdf.save("SmartHire_Certificate.pdf");
   };

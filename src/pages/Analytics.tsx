@@ -1,7 +1,4 @@
 import { useEffect, useState } from "react";
-import { db } from "@/config/firebase.config";
-import { doc, getDoc } from "firebase/firestore";
-import { useAuth } from "@clerk/clerk-react";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -21,28 +18,26 @@ interface PerformanceEntry {
 }
 
 const Analytics = () => {
-  const { userId } = useAuth();
   const [scores, setScores] = useState<number[]>([]);
   const [dates, setDates] = useState<string[]>([]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (!userId) return;
+    // Static data for testing
+    const staticData: PerformanceEntry[] = [
+      { date: "2025-04-01", score: 80 },
+      { date: "2025-04-02", score: 85 },
+      { date: "2025-04-03", score: 90 },
+      { date: "2025-04-04", score: 88 },
+      { date: "2025-04-05", score: 92 },
+      { date: "2025-04-06", score: 87 },
+      { date: "2025-04-07", score: 91 },
+    ];
 
-      const userDoc = await getDoc(doc(db, "users", userId));
-      const data = userDoc.data();
-
-      if (data?.performanceHistory) {
-        const sorted = (data.performanceHistory as PerformanceEntry[]).sort((a, b) =>
-          a.date.localeCompare(b.date)
-        );
-        setScores(sorted.map((entry) => entry.score));
-        setDates(sorted.map((entry) => entry.date));
-      }
-    };
-
-    fetchData();
-  }, [userId]);
+    // Sort and set static data
+    const sorted = staticData.sort((a, b) => a.date.localeCompare(b.date));
+    setScores(sorted.map((entry) => entry.score));
+    setDates(sorted.map((entry) => entry.date));
+  }, []);
 
   return (
     <div className="p-6 max-w-4xl mx-auto">

@@ -1,7 +1,4 @@
 import { useEffect, useState } from "react";
-import { db } from "@/config/firebase.config";
-
-import { collection, getDocs, query, orderBy, limit } from "firebase/firestore";
 
 interface LeaderboardUser {
   id: string;
@@ -15,26 +12,24 @@ const Leaderboard = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchLeaderboard = async () => {
-      try {
-        const usersRef = collection(db, "users");
-        const q = query(usersRef, orderBy("avgRating", "desc"), limit(10));
-        const snapshot = await getDocs(q);
-        const topUsers: LeaderboardUser[] = snapshot.docs.map(doc => ({
-          id: doc.id,
-          name: doc.data().name || "Anonymous",
-          avgRating: doc.data().avgRating || 0,
-          totalInterviews: doc.data().totalInterviews || 0,
-        }));
-        setUsers(topUsers);
-      } catch (error) {
-        console.error("Error loading leaderboard:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    // Simulate loading static data instead of fetching from Firestore
+    const staticData: LeaderboardUser[] = [
+      { id: "1", name: "Alice", avgRating: 4.8, totalInterviews: 50 },
+      { id: "2", name: "Bob", avgRating: 4.5, totalInterviews: 42 },
+      { id: "3", name: "Charlie", avgRating: 4.3, totalInterviews: 30 },
+      { id: "4", name: "David", avgRating: 4.1, totalInterviews: 28 },
+      { id: "5", name: "Eve", avgRating: 4.0, totalInterviews: 26 },
+      { id: "6", name: "Frank", avgRating: 3.9, totalInterviews: 24 },
+      { id: "7", name: "Grace", avgRating: 3.8, totalInterviews: 22 },
+      { id: "8", name: "Hannah", avgRating: 3.7, totalInterviews: 20 },
+      { id: "9", name: "Isaac", avgRating: 3.6, totalInterviews: 18 },
+      { id: "10", name: "Jack", avgRating: 3.5, totalInterviews: 15 },
+    ];
 
-    fetchLeaderboard();
+    setTimeout(() => {
+      setUsers(staticData);
+      setLoading(false);
+    }, 1000); // Simulate a delay (like fetching from an API)
   }, []);
 
   return (
